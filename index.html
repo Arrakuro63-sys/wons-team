@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wons Team - Discord Topluluğu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --background: #0a0a0a;
+            --foreground: #fafafa;
+            --card: #1a1a1a;
+            --primary: #8b5cf6;
+            --discord-blurple: #5865f2;
+            --border: #333;
+            --muted: #2a2a2a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Background effects */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, rgba(10, 10, 10, 1) 100%);
+            z-index: -1;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .glass:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .nav-links {
+            display: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .nav-links { display: flex; }
+        }
+
+        .nav-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--discord-blurple);
+            color: white;
+            box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--foreground);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--muted);
+            border-color: #555;
+        }
+
+        .btn-lg { padding: 1rem 2rem; font-size: 1.125rem; }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 1rem 6rem;
+            text-align: center;
+        }
+
+        .hero-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: float 4s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to bottom, #fff 30%, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: #a1a1aa;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.25rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Stats Section */
+        .stats { padding: 4rem 0; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 16px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            letter-spacing: -1px;
+        }
+
+        .stat-label { color: #71717a; font-weight: 500; }
+
+        /* Programs Section */
+        .programs { padding: 6rem 0; }
+        .programs h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            min-height: 200px;
+        }
+
+        .empty-programs {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #71717a;
+            padding: 3rem;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+        }
+
+        /* About Section */
+        .about { padding: 6rem 0; }
+        .about-content { border-radius: 24px; padding: 4rem; }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (min-width: 992px) { .about-grid { grid-template-columns: 1.2fr 0.8fr; } }
+
+        .about h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .about p { color: #a1a1aa; margin-bottom: 1.5rem; font-size: 1.1rem; }
+
+        .about-badges { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2.5rem; }
+        .badge {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .about-stats-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .mini-stat {
+            background: rgba(255,255,255,0.02);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        /* Footer */
+        footer {
+            background: #050505;
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo-text { font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; display: block; }
+        .footer-desc { color: #71717a; font-size: 0.9rem; line-height: 1.6; }
+        
+        .footer-head { font-size: 1rem; font-weight: 700; margin-bottom: 1.5rem; color: #fff; }
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 0.75rem; }
+        .footer-links a { color: #71717a; text-decoration: none; transition: 0.3s; font-size: 0.9rem; }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: #52525b;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding-top: 5rem; }
+            .about-content { padding: 2rem; }
+            .btn-lg { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg"></div>
+    
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+                        </svg>
+                    </div>
+                    <span>Wons Team</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#programs">Programlar</a>
+                    <a href="#about">Hakkımızda</a>
+                    <a href="#stats">İstatistikler</a>
+                    <a href="https://discord.com/invite/wMBQebKJjV" target="_blank" class="btn btn-primary">
+                        Discord'a Katıl
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+                </svg>
+            </div>
+            <h1>Wons Team Topluluğuna<br>Hoş Geldiniz</h1>
+            <p>En güncel yazılımlar, güvenli araçlar ve teknoloji meraklılarıyla dolu devasa bir ekosistem. Sizi de aramızda görmek için sabırsızlanıyoruz.</p>
+            <div class="hero-buttons">
+                <a href="https://discord.com/invite/wMBQebKJjV" target="_blank" class="btn btn-primary btn-lg">
+                    Hemen Katıl
+                </a>
+                <a href="#programs" class="btn btn-outline btn-lg">
+                    Programları Keşfet
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats" id="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-number">1,250+</div>
+                    <div class="stat-label">Aktif Üye</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">Özel Yazılım</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Toplam İndirme</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Canlı Destek</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="programs" id="programs">
+        <div class="container">
+            <h2>Popüler Araçlar</h2>
+            <div class="programs-grid">
+                <div class="empty-programs">
+                    <p>Uygulamalar yakında eklenecektir. Takipte kalın!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content glass">
+                <div class="about-grid">
+                    <div>
+                        <h2>Biz Kimiz?</h2>
+                        <p>2020 yılında temelleri atılan Wons Team, bugün binlerce üyeye ev sahipliği yapan bir teknoloji komünitesidir.</p>
+                        <p>Temel amacımız, yazılım dünyasındaki yenilikleri herkes için erişilebilir kılmak ve güvenli bir paylaşım ortamı yaratmaktır.</p>
+                        <div class="about-badges">
+                            <span class="badge">Yazılım</span>
+                            <span class="badge">Güvenlik</span>
+                            <span class="badge">Gaming</span>
+                            <span class="badge">Open Source</span>
+                        </div>
+                    </div>
+                    <div class="about-stats-mini">
+                        <div class="mini-stat">
+                            <h3 style="color:var(--primary); font-size: 2rem;">4+</h3>
+                            <p style="font-size: 0.8rem; color:#71717a;">Yıllık Deneyim</p>
+                        </div>
+                        <div class="mini-stat">
+                            <h3 style="color:var(--primary); font-size: 2rem;">%100</h3>
+                            <p style="font-size: 0.8rem; color:#71717a;">Ücretsiz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <span class="footer-logo-text">Wons Team</span>
+                    <p class="footer-desc">Teknoloji tutkunlarını bir araya getiren, güvenli yazılım paylaşım merkezi.</p>
+                </div>
+                <div>
+                    <h4 class="footer-head">Hızlı Linkler</h4>
+                    <ul class="footer-links">
+                        <li><a href="#programs">Programlar</a></li>
+                        <li><a href="#about">Hakkımızda</a></li>
+                        <li><a href="#stats">İstatistikler</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-head">Destek</h4>
+                    <ul class="footer-links">
+                        <li><a href="https://discord.com/invite/wMBQebKJjV">Discord</a></li>
+                        <li><a href="#">S.S.S</a></li>
+                        <li><a href="#">Kullanım Şartları</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Wons Team. Tüm Hakları Saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass').forEach(el => {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(20px)";
+            el.style.transition = "all 0.6s ease-out";
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
